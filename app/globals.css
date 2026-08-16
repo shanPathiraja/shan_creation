@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* The var() fallbacks matter: an undefined font variable invalidates the
+     whole font-family declaration, which silently drops the page to Times. */
+  --stack-sans: var(--font-inter, ui-sans-serif), ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --stack-display: var(--font-display, ui-sans-serif),
+    var(--font-inter, ui-sans-serif), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #05070f;
+  color: #f5f6fa;
+  font-family: var(--stack-sans);
+}
+
+/* Space Grotesk carries all display type; Inter handles running text. */
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: var(--stack-display);
+  letter-spacing: -0.02em;
+}
+
+.text-gradient {
+  background-image: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 55%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glow-blob {
+  filter: blur(90px);
+  opacity: 0.35;
+}
+
+.card {
+  background: rgba(5, 7, 15, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.text-shadow-soft {
+  text-shadow: 0 2px 30px rgba(0, 0, 0, 0.55);
+}

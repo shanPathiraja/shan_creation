@@ -1,34 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Shan Creation Website
 
-## Getting Started
+A 5-page Next.js (App Router + TypeScript + Tailwind CSS) site for Shan Creation, matching your logo/cover branding: dark navy background, blue → purple → pink gradient accents.
 
-First, run the development server:
+Every page runs a persistent, real-time **WebGL 3D background** (Three.js via `@react-three/fiber` + `@react-three/drei`): glossy floating distorted blobs in your brand colors, ambient sparkles, and a camera that gently follows the cursor. It's a single scene mounted once in `layout.tsx`, so it never reloads or flickers when you navigate between pages — the Home page just gets bigger/brighter shapes as the hero moment, other pages get a calmer version so the content stays readable.
+
+Pages: Home, Services (with pricing), Portfolio, About, Contact.
+
+## Before you launch
+
+1. **Facebook link** — open `lib/site.ts` and replace the `facebook` URL with your real Shan Creation Page URL.
+2. **Email** — same file, confirm the `email` field is the address you want inquiries sent to.
+3. **Portfolio links** — `lib/site.ts` → `portfolio` array currently links to your personal project demos (Creative Paradise, Wilpattu Wilds, Nexus, Solara, FitTrack) as capability proof, since Shan Creation doesn't have client work yet. Swap these out for real client projects as you land them — just add a screenshot to `/public/portfolio` and update the `gradient` card to an `<Image>` if you'd rather show real screenshots instead of gradient cards.
+4. **Pricing** — same file, `pricing` array, adjust numbers as needed.
+
+## Run it locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Deploy
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+This is a standard Next.js app — deploys to Vercel in about a minute:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```bash
+npm install -g vercel
+vercel
+```
 
-## Learn More
+Or connect the folder as a GitHub repo and import it at vercel.com — same flow you already use for your other projects.
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- The contact form doesn't use a backend — it opens the visitor's email client with the message pre-filled (`mailto:`). If you want it to submit silently without opening email, swap `ContactForm.tsx` to POST to a form service (e.g. Formspree) or a Next.js API route — happy to help wire that up later.
+- Logo assets are already in `/public` (`logo.png` transparent, `logo-square.png`, `cover.png`).
+- Colors/gradient live in `tailwind.config.ts` under `brand` and `navy` — change them there to restyle the whole site at once.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## About the WebGL background
 
-## Deploy on Vercel
+`components/WebGLBackground.tsx` is the 3D scene, rendered once in `app/layout.tsx` so it persists across all pages (no remount/flicker on navigation). It reads the current route and swaps in a bigger/brighter set of shapes on Home vs. a calmer set everywhere else.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+A few things worth knowing:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **`<Environment preset="city">`** (for the glossy reflections on the blobs) fetches a small HDRI from drei's CDN at runtime, in the visitor's browser — this needs internet access on the visitor's end (normal for any deployed site) but means the very first load fetches an extra ~100–200KB asset. If you'd rather not depend on that CDN, delete the `<Environment />` line — the blobs still look good with just the two lights.
+- **Performance**: `dpr={[1, 1.5]}` caps rendering resolution for performance, and `Sparkles` count is lower on non-Home pages. If it feels heavy on low-end phones, lower `count` in `WebGLBackground.tsx` or wrap the whole component in a check that disables it on `prefers-reduced-motion`.
+- I couldn't run a real WebGL renderer in my build environment to visually preview this (no headless browser available there), so double-check it in your browser after `npm run dev` — if any shape looks off (position/scale), the values are in `HOME_BLOBS` / `PAGE_BLOBS` at the top of `WebGLBackground.tsx` and are easy to nudge.
+- Every `.tsx`/`.ts` file in this project was run through a TypeScript syntax check before delivery, so there shouldn't be any typos/syntax errors — but this doesn't replace an actual `npm run build`.
